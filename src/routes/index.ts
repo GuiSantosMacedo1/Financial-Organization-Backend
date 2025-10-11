@@ -1,11 +1,9 @@
 import { Router } from 'express';
-import transactionsRouter from './transactions';
-import accountsRouter from './accounts';
+import transactions from './transactions';
 
 const router = Router();
 
-// Mount route modules
-router.use('/transactions', transactionsRouter);
-router.use('/accounts', accountsRouter);
+
+router.use('/transactions', transactions);
 
 export default router;

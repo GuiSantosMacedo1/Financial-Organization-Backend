@@ -1,26 +1,33 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import { connectDatabase } from './database/connection';
 import routes from './routes';
+import mongoose from 'mongoose';
+
+dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+connectDatabase();
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check route
 app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ status: 'OK', message: 'Server is running' });
+  res.status(200).json({ 
+    status: 'OK', 
+    message: 'Server is running',
+    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+  });
 });
 
-// API routes
 app.use('/api', routes);
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });
 
 export default app;
