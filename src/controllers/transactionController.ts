@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Transaction } from '../models/transactionModel';
+import { timeStamp } from 'console';
 
 export const getTransactions = async (req: Request, res: Response) => {
   try {
@@ -108,6 +109,25 @@ export const putTransactions = async (req: Request, res: Response) => {
       message: 'Transação atualizada com sucesso',
       timestamp: new Date().toISOString()
     });
+  } catch(error) {
+    res.status(500).json({ message: 'Erro ao atualizar transação', error });
+  }
+}
+
+export const deleteTransaction = async (req: Request, res:Response) => {
+  try{
+    const { id } = req.params
+    if(!id){
+      return res.status(400).json({ message: 'ID é obrigatório'})
+    }
+    const deletedTransaction = await Transaction.findByIdAndDelete(id);
+    if(!deletedTransaction){
+      return res.status(404).json({ message: 'Transação não encontrada' })
+    }
+    return res.json({
+      message: 'Transação Excluída com Sucesso',
+      timeStamp: new Date().toISOString
+    })
   } catch(error) {
     res.status(500).json({ message: 'Erro ao atualizar transação', error });
   }
