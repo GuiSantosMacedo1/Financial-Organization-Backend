@@ -3,7 +3,8 @@ import { Transaction } from '../transactions/transactionModel';
 
 export const getTransactions = async (req: Request, res: Response) => {
   try {
-    const transactions = await Transaction.find();
+    const userId = (req as any).user.id;
+    const transactions = await Transaction.find({ userId });
     res.json({
       data: transactions,
       message: 'Lista de transações',
@@ -16,6 +17,7 @@ export const getTransactions = async (req: Request, res: Response) => {
 
 export const postTransactions = async (req: Request, res: Response) => {
   try {
+    const userId = (req as any).user.id;
     const { category, description, amount, date, type } = req.body;
 
     if (!category || !description || !amount || !type) {
@@ -38,6 +40,7 @@ export const postTransactions = async (req: Request, res: Response) => {
     }
 
     const newTransaction = new Transaction({
+      userId,
       category, 
       description, 
       amount: Number(amount), 
@@ -86,7 +89,7 @@ export const putTransactions = async (req: Request, res: Response) => {
     }
 
     const updatedTransaction = await Transaction.findByIdAndUpdate(
-      id,
+      {_id: id, userId: (req as any).user.id },
       {
         category,
         description,
@@ -101,7 +104,7 @@ export const putTransactions = async (req: Request, res: Response) => {
     );
 
     if(!updatedTransaction){
-      return res.status(404).json({ message: 'Transação não encontrada' });
+      return res.status(404).json({ message: 'Transação não encontrada ou sem permissão' });
     }
       res.json({
       data: updatedTransaction,
@@ -119,7 +122,7 @@ export const deleteTransaction = async (req: Request, res:Response) => {
     if(!id){
       return res.status(400).json({ message: 'ID é obrigatório'})
     }
-    const deletedTransaction = await Transaction.findByIdAndDelete(id);
+    const deletedTransaction = await Transaction.findByIdAndDelete({ _id: id, userId: (req as any).user.id});
     if(!deletedTransaction){
       return res.status(404).json({ message: 'Transação não encontrada' })
     }
