@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDatabase } from './database/connection';
-import routes from './modules/transactions/routes';
+import routes from './modules/routes';
 import mongoose from 'mongoose';
 
 dotenv.config();
