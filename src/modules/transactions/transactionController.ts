@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { Transaction } from '../models/transactionModel';
-import { timeStamp } from 'console';
+import { Transaction } from '../transactions/transactionModel';
 
 export const getTransactions = async (req: Request, res: Response) => {
   try {
