@@ -88,8 +88,8 @@ export const putTransactions = async (req: Request, res: Response) => {
       });
     }
 
-    const updatedTransaction = await Transaction.findByIdAndUpdate(
-      {_id: id, userId: (req as any).user.id },
+    const updatedTransaction = await Transaction.findOneAndUpdate(
+      { _id: id, userId: (req as any).user.id },
       {
         category,
         description,
@@ -118,17 +118,17 @@ export const putTransactions = async (req: Request, res: Response) => {
 
 export const deleteTransaction = async (req: Request, res:Response) => {
   try{
-    const { id } = req.params
+    const { id } = req.params;
     if(!id){
       return res.status(400).json({ message: 'ID é obrigatório'})
     }
-    const deletedTransaction = await Transaction.findByIdAndDelete({ _id: id, userId: (req as any).user.id});
+    const deletedTransaction = await Transaction.findOneAndDelete({ _id: id, userId: (req as any).user.id });
     if(!deletedTransaction){
       return res.status(404).json({ message: 'Transação não encontrada' })
     }
     return res.json({
       message: 'Transação Excluída com Sucesso',
-      timeStamp: new Date().toISOString
+      timeStamp: new Date().toISOString()
     })
   } catch(error) {
     res.status(500).json({ message: 'Erro ao atualizar transação', error });
