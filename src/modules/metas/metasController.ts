@@ -22,16 +22,17 @@ export const postMetas = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Usuário não autenticado' });
     }
 
-    const { title, description, amount, date, deadline, saved, completed } = req.body;
+    const { title, description, amount, amountSaved , date, deadline, saved, completed } = req.body;
     const finalSaved = completed ?? saved;
     const finalDate = deadline ?? date;
-    if (title == null || description == null || amount == null || finalSaved == null) {
+    if (title == null || description == null || amount == null || finalSaved == null || amountSaved == null) {
       return res.status(400).json({
         message: 'Campos obrigatórios: title, description, amount, saved/completed',
         missingFields: {
           title: title == null,
           description: description == null,
           amount: amount == null,
+          amountSaved: amountSaved == null,
           saved: finalSaved == null
         }
       });
@@ -41,6 +42,7 @@ export const postMetas = async (req: Request, res: Response) => {
       title,
       description,
       amount: Number(amount),
+      amountSaved: Number(amountSaved),
       date: finalDate ? new Date(finalDate) : new Date(),
       saved: Boolean(finalSaved)
     });
@@ -66,16 +68,17 @@ export const putMetas = async (req: Request, res: Response) => {
     if (!id) {
       return res.status(401).json({ message: 'ID não encontrado' });
     }
-    const { title, description, amount, date, deadline, saved, completed } = req.body;
+    const { title, description, amount, amountSaved, date, deadline, saved, completed } = req.body;
     const finalSaved = completed ?? saved;
     const finalDate = deadline ?? date;
-    if (title == null || description == null || amount == null || finalSaved == null) {
+    if (title == null || description == null || amount == null || finalSaved == null || amountSaved == null) {
       return res.status(400).json({
         message: 'Campos obrigatórios: title, description, amount, saved/completed',
         missingFields: {
           title: title == null,
           description: description == null,
           amount: amount == null,
+          amountSaved: amountSaved == null,
           saved: finalSaved == null
         }
       });
@@ -86,6 +89,7 @@ export const putMetas = async (req: Request, res: Response) => {
         title,
         description,
         amount: Number(amount),
+        amountSaved: Number(amountSaved),
         date: finalDate ? new Date(finalDate) : new Date(),
         saved: Boolean(finalSaved)
       },

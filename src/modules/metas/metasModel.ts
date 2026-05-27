@@ -5,6 +5,7 @@ export interface IMetas extends Document {
   title: string;
   description: string;
   amount: number;
+  amountSaved: number;
   date: Date;
   saved: boolean;
 }
@@ -14,6 +15,7 @@ const metasSchema = new Schema<IMetas>({
   title: { type: String, required: true },
   description: { type: String, required: true },
   amount: { type: Number, required: true },
+  amountSaved: { type: Number, required: true },
   date: { type: Date, default: Date.now },
   saved: { type:Boolean, required: true }
 });
