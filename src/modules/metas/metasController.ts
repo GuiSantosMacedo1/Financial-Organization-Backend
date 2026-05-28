@@ -1,6 +1,17 @@
 import { Request, Response } from 'express';
 import { Metas } from "./metasModel";
 
+const normalizeLocalDate = (value?: string | Date) => {
+  if (!value) {
+    return new Date();
+  }
+
+  const dateValue = typeof value === 'string' ? value : value.toISOString();
+  const datePart = dateValue.slice(0, 10);
+
+  return new Date(`${datePart}T12:00:00`);
+};
+
 export const getMetas = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
@@ -43,7 +54,7 @@ export const postMetas = async (req: Request, res: Response) => {
       description,
       amount: Number(amount),
       amountSaved: Number(amountSaved),
-      date: finalDate ? new Date(finalDate) : new Date(),
+      date: normalizeLocalDate(finalDate),
       saved: Boolean(finalSaved)
     });
     const savedMeta = await newMeta.save();
@@ -90,7 +101,7 @@ export const putMetas = async (req: Request, res: Response) => {
         description,
         amount: Number(amount),
         amountSaved: Number(amountSaved),
-        date: finalDate ? new Date(finalDate) : new Date(),
+        date: normalizeLocalDate(finalDate),
         saved: Boolean(finalSaved)
       },
       {
