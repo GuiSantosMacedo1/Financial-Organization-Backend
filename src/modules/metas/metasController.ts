@@ -122,6 +122,54 @@ export const putMetas = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Erro ao atualizar as Metas', error: error instanceof Error ? error.message : error });
   }
 }
+
+export const patchMetaAmountSaved = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: 'ID não encontrado' });
+    }
+
+    const { amountSaved } = req.body;
+    if (amountSaved == null) {
+      return res.status(400).json({ message: 'Campo obrigatório: amountSaved' });
+    }
+
+    const meta = await Metas.findOne({ _id: id, userId });
+    if (!meta) {
+      return res.status(404).json({ message: 'Meta não encontrada ou sem permissão' });
+    }
+
+    const nextAmountSaved = Number(amountSaved);
+    const shouldBeSaved = nextAmountSaved >= Number(meta.amount);
+
+    const updatedMeta = await Metas.findOneAndUpdate(
+      { _id: id, userId },
+      {
+        amountSaved: nextAmountSaved,
+        saved: shouldBeSaved
+      },
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    return res.json({
+      data: updatedMeta,
+      message: 'Valor da meta atualizado com sucesso',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('patchMetaAmountSaved error:', error);
+    res.status(500).json({ message: 'Erro ao atualizar o valor guardado', error: error instanceof Error ? error.message : error });
+  }
+}
 export const deleteMetas = async (req: Request, res:Response) => {
   try{
     const userId = (req as any).user?.id;
