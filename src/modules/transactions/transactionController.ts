@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Transaction } from '../transactions/transactionModel';
+import { handleError } from '../../utils/handleError';
 
 export const getTransactions = async (req: Request, res: Response) => {
   try {
@@ -56,7 +57,7 @@ export const postTransactions = async (req: Request, res: Response) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao criar transação', error });
+    handleError(res, 'Erro ao criar transação', error);
   }
 }
 
