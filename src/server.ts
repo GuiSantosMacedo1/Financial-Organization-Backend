@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { connectDatabase } from './database/connection';
 import routes from './modules/routes';
 import mongoose from 'mongoose';
+import helmet from 'helmet';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ const allowedOrigins = [
   'http://localhost:4200',
 ];
 
+app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {
     if(!origin || allowedOrigins.includes(origin)) {
